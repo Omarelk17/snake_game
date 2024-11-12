@@ -4,7 +4,7 @@
   "description": "A multiplayer snake game built on NodeJs, Express, socket.io, JavaScript ES6, and jspm.",
   "repository": {
     "type": "git",
-   
+    "url": "https://github.com/Omarelk17/snake_game.git"
   },
   "scripts": {
     "start": "node app.js",
@@ -12,7 +12,6 @@
     "test": "mocha",
     "coverage": "istanbul cover node_modules/mocha/bin/_mocha",
     "sonar": "node sonar-project.js"
-    
   },
   "devDependencies": {
     "chai": "^3.5.0",
