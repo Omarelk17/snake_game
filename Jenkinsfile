@@ -8,8 +8,17 @@ pipeline {
             steps {
                 checkout scm
             }
-        }  
- 
+        }
+
+        stage('INSTALL DEPENDENCIES') {
+            agent {
+                label 'ubuntu-Appserver-2140'
+            }
+            steps {
+                sh 'npm install'
+            }
+        }
+
         stage('SCA-SAST-SNYK-TEST') {
             agent any
             steps {
@@ -22,7 +31,7 @@ pipeline {
                 }
             }
         }
- 
+
         stage('SonarQube Analysis') {
             agent {
                 label 'ubuntu-Appserver-2140'
@@ -38,7 +47,7 @@ pipeline {
                 }
             }
         }
- 
+
         stage('BUILD-AND-TAG') {
             agent {
                 label 'ubuntu-Appserver-2140'
@@ -50,7 +59,7 @@ pipeline {
                 }
             }
         }
- 
+
         stage('POST-TO-DOCKERHUB') {    
             agent {
                 label 'ubuntu-Appserver-2140'
@@ -64,7 +73,7 @@ pipeline {
                 }
             }
         }
- 
+
         stage('DEPLOYMENT') {    
             agent {
                 label 'ubuntu-Appserver-2140'
