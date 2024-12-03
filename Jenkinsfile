@@ -1,69 +1,52 @@
 pipeline {
-    agent none
+    agent any
     stages {
         stage('CLONE GIT REPOSITORY') {
-            agent {
-                label 'ubuntu-Appserver-2140'
-            }
+            agent any
             steps {
                 checkout scm
             }
-        }
-
-        stage('INSTALL DEPENDENCIES') {
-            agent {
-                label 'ubuntu-Appserver-2140'
-            }
-            steps {
-                sh 'npm install'
-            }
-        }
-
+        }  
+ 
         stage('SCA-SAST-SNYK-TEST') {
             agent any
             steps {
                 script {
                     snykSecurity(
                         snykInstallation: 'Snyk',
-                        snykTokenId: 'synk_api',
+                        snykTokenId: 'Snyk_Token',
                         severity: 'critical'
                     )
                 }
             }
         }
-
+ 
         stage('SonarQube Analysis') {
-            agent {
-                label 'ubuntu-Appserver-2140'
-            }
+            agent any
             steps {
                 script {
-                    def scannerHome = tool 'sonarqube'
-                    withSonarQubeEnv('sonarqube') {
+                    def scannerHome = tool 'Scanner'
+                    withSonarQubeEnv('Sonar') {
                         sh "${scannerHome}/bin/sonar-scanner \
-                            -Dsonar.projectKey=snake_game \
+                            -Dsonar.projectKey=projectgame \
                             -Dsonar.sources=."
                     }
                 }
             }
         }
-
+ 
         stage('BUILD-AND-TAG') {
-            agent {
-                label 'ubuntu-Appserver-2140'
-            }
+            agent any
             steps {
                 script {
-                    def app = docker.build("omarelk18/snake_game")
+                    def app = docker.build("ameliamae/sgameimg")
                     app.tag("latest")
                 }
             }
         }
-
+ 
         stage('POST-TO-DOCKERHUB') {    
-            agent {
-                label 'ubuntu-Appserver-2140'
-            }
+            agent any
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub_credentials') {
@@ -73,11 +56,9 @@ pipeline {
                 }
             }
         }
-
+ 
         stage('DEPLOYMENT') {    
-            agent {
-                label 'ubuntu-Appserver-2140'
-            }
+            agent any
             steps {
                 sh "docker-compose down"
                 sh "docker-compose up -d"   
